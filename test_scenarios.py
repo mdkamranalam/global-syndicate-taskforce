@@ -16,9 +16,9 @@ def run_tests():
         operation="cross_examine_kyc", 
         policy_mandate="IndiaStack_Section_9" # Wrong mandate for Medium!
     )
-    obs, reward, done = env.step(action_wrong)
+    obs = env.step(action_wrong)
     print(f"Action: Used wrong mandate (IndiaStack_Section_9)")
-    print(f"Result: {obs.system_alerts} | Reward: {reward:.2f}\n")
+    print(f"Result: {obs.system_alerts} | Reward: {obs.reward:.2f}\n")
     
     # Action: Try the CORRECT mandate for Medium
     action_right = AMLAction(
@@ -26,10 +26,10 @@ def run_tests():
         operation="cross_examine_kyc", 
         policy_mandate="AML_Directive_4"
     )
-    obs, reward, done = env.step(action_right)
+    obs = env.step(action_right)
     print(f"Action: Used correct mandate (AML_Directive_4)")
     print(f"Result: {obs.system_alerts}")
-    print(f"Data Unlocked: {obs.verified_facts} | Reward: {reward:.2f}\n")
+    print(f"Data Unlocked: {obs.verified_facts} | Reward: {obs.reward:.2f}\n")
 
 
     print("========================================")
@@ -47,9 +47,9 @@ def run_tests():
         operation="submit_final_ruling", 
         evidence_chain=["CLEAN_VERIFIED"]
     )
-    obs, reward, done = env.step(action_submit)
+    obs = env.step(action_submit)
     print(f"Action: Submitted 'CLEAN_VERIFIED' based on Analyst.")
-    print(f"Result: {obs.system_alerts} | Terminal Reward: {reward:.2f}\n")
+    print(f"Result: {obs.system_alerts} | Terminal Reward: {obs.reward:.2f}\n")
 
 if __name__ == "__main__":
     run_tests()
