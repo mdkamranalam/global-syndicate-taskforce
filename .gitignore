@@ -51,11 +51,20 @@ logs/
 htmlcov/
 .mypy_cache/
 
-# TRL / Unsloth Training Artifacts
+# TRL / Unsloth / Mac Training Artifacts
 outputs/
+outputs_mac/
 grpo_trained_auditor/
+grpo_trained_auditor_mac/
 *.safetensors
 *.bin
+*.zip
+
+# Frontend UI
+node_modules/
+dist/
+.env.development
+.env.production
 
 # OpenEnv / Hugging Face
 .huggingface/
