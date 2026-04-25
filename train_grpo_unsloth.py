@@ -135,6 +135,7 @@ training_args = GRPOConfig(
     gradient_accumulation_steps=4,
     # GRPO Specifics
     num_generations=4, # Generate 4 completions per prompt to compare them
+    generation_batch_size=4,
     max_completion_length=128,
 )
 
