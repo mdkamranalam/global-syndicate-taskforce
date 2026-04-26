@@ -134,3 +134,10 @@ global_syndicate_taskforce_env/
 - [ ] Add unlisted YouTube link to this README.
 - [ ] Deploy Space and verify `/web`, `/docs`, `/health`.
 - [ ] Submit final Space URL to judges.
+
+## Submission Links (Fill Before Final Submit)
+
+- Demo video (unlisted): `<paste-youtube-link>`
+- Hugging Face Space: `<paste-space-url>`
+- Reward curve image: `<path-or-link-to-reward-curve.png>`
+- Loss curve image: `<path-or-link-to-loss-curve.png>`

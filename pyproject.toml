@@ -43,3 +43,14 @@ server = "global_syndicate_taskforce_env.server.app:main"
 include-package-data = true
 packages = ["global_syndicate_taskforce_env", "global_syndicate_taskforce_env.server"]
 package-dir = { "global_syndicate_taskforce_env" = ".", "global_syndicate_taskforce_env.server" = "server" }
+
+[dependency-groups]
+dev = [
+    "accelerate>=1.13.0",
+    "datasets>=4.8.4",
+    "matplotlib>=3.10.9",
+    "peft>=0.19.1",
+    "torch>=2.11.0",
+    "transformers>=5.6.2",
+    "trl>=1.2.0",
+]

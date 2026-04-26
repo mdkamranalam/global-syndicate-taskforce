@@ -1,16 +1,20 @@
-# Byte-compiled / optimized / DLL files
+# Python bytecode / caches
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 
-# C extensions
+# Native / extension artifacts
 *.so
 
-# Distribution / packaging
+# Packaging / build
 .Python
 build/
-develop-eggs/
 dist/
+develop-eggs/
 downloads/
 eggs/
 .eggs/
@@ -26,32 +30,29 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# Virtual Environments
-.env
-.venv
-env/
+# Virtual environments
+.venv/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
 
-# Environment Variables
+# Env files
+.env
 .env.local
+.env.development
+.env.production
 
-# MacOS
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Project specific / Data / Logs
+# Logs / coverage
 *.log
 logs/
-.pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
-.mypy_cache/
+coverage.xml
 
-# TRL / Unsloth / Mac Training Artifacts
+# Training artifacts (large/generated)
 outputs/
 outputs_mac/
 grpo_trained_auditor/
@@ -60,21 +61,24 @@ grpo_trained_auditor_mac/
 *.bin
 *.zip
 
-# Frontend UI
+# Frontend artifacts
 node_modules/
-dist/
-.env.development
-.env.production
 
-# OpenEnv / Hugging Face
+# Local tool / platform files
+.DS_Store
+.AppleDouble
+.LSOverride
+.matplotlib/
+.mplconfig/
+.cache/
 .huggingface/
 .hf/
 
-# IDEs
+# Editors / IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Other files
+# Project-local notes
 assist.md

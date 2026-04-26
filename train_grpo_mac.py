@@ -106,6 +106,9 @@ dataset = Dataset.from_list(prompts * 10)
 # ==========================================
 training_args = GRPOConfig(
     output_dir="outputs_mac",
+    use_cpu=True,
+    bf16=False,
+    fp16=False,
     learning_rate=5e-5,
     logging_steps=1,
     max_steps=10, # Very short for local testing
