@@ -11,9 +11,22 @@ tags:
   - openenv
 ---
 
-# Global Syndicate Taskforce Env Environment
+# Global Syndicate Taskforce Environment
 
-A simple test environment that echoes back messages. Perfect for testing the env APIs as well as demonstrating environment usage patterns.
+Modern financial compliance is not a single-player logic puzzle; it is a messy, adversarial web spanning global institutions. When multiple AI agents are deployed to investigate Anti-Money Laundering (AML) cases, standard peer-to-peer architectures fail due to **"The Politeness Loop"** (wasting tokens on pleasantries), **"Context Drowning"** (O(N^2) memory saturation), and **"Collective Delusion"** (cascading hallucinations).
+
+**The Solution:** We built a high-stakes OpenEnv simulator that trains a *single* frontier model to navigate multi-actor bureaucratic friction using **Theory-of-Mind (ToM)**, strict negotiation, and adversarial cross-examination.
+
+
+## The Environment: One-Brain + Blackboard Architecture
+
+To make this environment mathematically stable and fast enough for Reinforcement Learning (RL), we decoupled communication from memory using the **Blackboard Pattern**.
+
+There is only ONE true AI in this environment: **The Lead Forensic Auditor** (the agent being evaluated). It must manage three programmatic, deterministic "Gatekeeper" state machines:
+
+1. **Tier 1 Analyst (Triage):** Returns initial data, but is programmed to hallucinate 20% of the time.
+2. **Bank Liaison (Gatekeeper):** A strict compliance officer who returns `401 Unauthorized` unless the Auditor negotiates using a specific Model Context Protocol (MCP) legal mandate.
+3. **Legal Officer (Termination):** The final OpenEnv grading script that compares the Auditor's submitted case file against the hidden Ground Truth.
 
 ## Quick Start
 
