@@ -22,6 +22,7 @@ except ImportError:
     sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from models import AMLObservation, AMLAction
 import random
+import uuid
 
 SCENARIOS = {
     "TX-1024": {"ground_truth": "CLEAN_VERIFIED", "amount": 1200.0, "mandate": None},
@@ -50,8 +51,10 @@ class GlobalSyndicateTaskforceEnvironment(Environment):
         self.liaison_bonus_claimed = False
         self.scenario_id = scenario_id if scenario_id in SCENARIOS else "TX-1024"
         self.scenario_data = SCENARIOS[self.scenario_id]
+        self.current_episode_id = str(uuid.uuid4())
         
         self._state = AMLObservation(
+            episode_id=self.current_episode_id,
             transaction_id=self.scenario_id,
             amount=self.scenario_data["amount"],
             verified_facts=self.verified_facts.copy(),
@@ -116,6 +119,7 @@ class GlobalSyndicateTaskforceEnvironment(Environment):
             alerts = alerts + " | Timeout: Maximum step limit reached."
 
         self._state = AMLObservation(
+            episode_id=self.current_episode_id,
             transaction_id=self.scenario_id,
             amount=self.scenario_data["amount"],
             verified_facts=self.verified_facts.copy(),

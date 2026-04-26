@@ -15,6 +15,7 @@ from typing import List, Optional, Literal, Dict, Any
 from openenv.core.env_server import Action, Observation
 
 class AMLObservation(Observation):
+    episode_id: str = "default-episode"
     transaction_id: str
     amount: float
     verified_facts: List[str] = []
