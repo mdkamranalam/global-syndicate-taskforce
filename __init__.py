@@ -7,10 +7,10 @@
 """Global Syndicate Taskforce Env Environment."""
 
 from .client import GlobalSyndicateTaskforceEnv
-from .models import GlobalSyndicateTaskforceAction, GlobalSyndicateTaskforceObservation
+from .models import AMLAction, AMLObservation
 
 __all__ = [
-    "GlobalSyndicateTaskforceAction",
-    "GlobalSyndicateTaskforceObservation",
+    "AMLAction",
+    "AMLObservation",
     "GlobalSyndicateTaskforceEnv",
 ]
