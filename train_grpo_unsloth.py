@@ -4,8 +4,6 @@ import requests
 from unsloth import FastLanguageModel
 from datasets import Dataset
 from trl import GRPOConfig, GRPOTrainer
-import sys
-import subprocess
 
 # ==========================================
 # 1. Configuration & Setup
