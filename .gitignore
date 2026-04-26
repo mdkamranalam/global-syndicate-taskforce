@@ -59,15 +59,25 @@ grpo_trained_auditor/
 grpo_trained_auditor_mac/
 *.safetensors
 *.bin
+*.pt
+*.pth
+*.ckpt
 *.zip
+wandb/
+runs/
+checkpoints/
+tb_logs/
 
 # Frontend artifacts
 node_modules/
 
 # Local tool / platform files
 .DS_Store
+._*
 .AppleDouble
 .LSOverride
+.Trashes
+.Spotlight-V100
 .matplotlib/
 .mplconfig/
 .cache/

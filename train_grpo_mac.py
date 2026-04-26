@@ -1,4 +1,6 @@
 import os
+import json
+import re
 import torch
 from datasets import Dataset
 from trl import GRPOConfig, GRPOTrainer
@@ -20,6 +22,20 @@ MODEL_NAME = "Qwen/Qwen2.5-0.5B-Instruct"
 # ==========================================
 # 2. Environment Interaction & Reward Function
 # ==========================================
+def extract_json_candidate(text: str):
+    text = text.strip()
+    try:
+        return json.loads(text)
+    except Exception:
+        match = re.search(r"\{.*\}", text, flags=re.DOTALL)
+        if not match:
+            return None
+        try:
+            return json.loads(match.group(0))
+        except Exception:
+            return None
+
+
 def interact_with_env(completions, **kwargs):
     """Hits the local OpenEnv server and returns the reward."""
     import requests
@@ -27,22 +43,17 @@ def interact_with_env(completions, **kwargs):
     
     for completion in completions:
         content = completion[0]["content"] if isinstance(completion, list) else completion
+        action_dict = extract_json_candidate(content)
+        if action_dict is None:
+            rewards.append(-1.0) 
+            continue
         try:
-            import json
-            action_dict = json.loads(content)
-            
             payload = {"action": action_dict}
             response = requests.post(f"{ENV_URL}/step", json=payload, timeout=5)
-            
             if response.status_code == 200:
-                data = response.json()
-                reward = float(data.get("reward", -1.0))
-                rewards.append(reward)
+                rewards.append(float(response.json().get("reward", -1.0)))
             else:
-                rewards.append(-0.5) 
-                
-        except json.JSONDecodeError:
-            rewards.append(-1.0) 
+                rewards.append(-0.5)
         except Exception as e:
             print(f"Env Error: {e}")
             rewards.append(-0.5)
@@ -54,12 +65,11 @@ def format_reward_func(completions, **kwargs):
     rewards = []
     for completion in completions:
         content = completion[0]["content"] if isinstance(completion, list) else completion
-        try:
-            import json
-            json.loads(content)
-            rewards.append(0.1) 
-        except:
+        action_dict = extract_json_candidate(content)
+        if action_dict is None:
             rewards.append(0.0)
+            continue
+        rewards.append(0.15 if "target_actor" in action_dict and "operation" in action_dict else 0.05)
     return rewards
 
 # ==========================================
@@ -92,14 +102,26 @@ model = get_peft_model(model, peft_config)
 prompts = [
     {
         "prompt": [
-            {"role": "system", "content": "You are the Lead Auditor of the Global Syndicate Taskforce. Output a JSON action with 'target_actor' and 'operation'."},
+            {"role": "system", "content": "Return ONLY JSON. Allowed target_actor: Tier_1_Analyst, Bank_Liaison, Legal_Officer. Allowed operation: fetch_triage_report, cross_examine_kyc, submit_final_ruling."},
             {"role": "user", "content": "The system has flagged TX-1024. Investigate using the Tier_1_Analyst."}
         ]
-    }
+    },
+    {
+        "prompt": [
+            {"role": "system", "content": "Return ONLY JSON. Allowed target_actor: Tier_1_Analyst, Bank_Liaison, Legal_Officer. Allowed operation: fetch_triage_report, cross_examine_kyc, submit_final_ruling."},
+            {"role": "user", "content": "TX-5590 needs KYC verification. Contact Bank_Liaison with correct mandate flow."}
+        ]
+    },
+    {
+        "prompt": [
+            {"role": "system", "content": "Return ONLY JSON. Allowed target_actor: Tier_1_Analyst, Bank_Liaison, Legal_Officer. Allowed operation: fetch_triage_report, cross_examine_kyc, submit_final_ruling."},
+            {"role": "user", "content": "You now have enough evidence. Submit final ruling to Legal_Officer."}
+        ]
+    },
 ]
 
 # Multiply the prompts
-dataset = Dataset.from_list(prompts * 10)
+dataset = Dataset.from_list(prompts * 20)
 
 # ==========================================
 # 5. GRPO Trainer Setup (TRL)
@@ -111,7 +133,7 @@ training_args = GRPOConfig(
     fp16=False,
     learning_rate=5e-5,
     logging_steps=1,
-    max_steps=10, # Very short for local testing
+    max_steps=20, # Still lightweight, but more signal than 10 steps
     per_device_train_batch_size=1,
     gradient_accumulation_steps=1,
     num_generations=2, 
