@@ -55,6 +55,7 @@ class GlobalSyndicateTaskforceEnvironment(Environment):
         
         self._state = AMLObservation(
             episode_id=self.current_episode_id,
+            step_count=self.step_count,
             transaction_id=self.scenario_id,
             amount=self.scenario_data["amount"],
             verified_facts=self.verified_facts.copy(),
@@ -120,6 +121,7 @@ class GlobalSyndicateTaskforceEnvironment(Environment):
 
         self._state = AMLObservation(
             episode_id=self.current_episode_id,
+            step_count=self.step_count,
             transaction_id=self.scenario_id,
             amount=self.scenario_data["amount"],
             verified_facts=self.verified_facts.copy(),

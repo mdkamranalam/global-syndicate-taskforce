@@ -16,6 +16,7 @@ from openenv.core.env_server import Action, Observation
 
 class AMLObservation(Observation):
     episode_id: str = "default-episode"
+    step_count: int = 0
     transaction_id: str
     amount: float
     verified_facts: List[str] = []
