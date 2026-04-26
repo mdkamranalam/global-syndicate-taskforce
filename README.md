@@ -28,6 +28,14 @@ There is only ONE true AI in this environment: **The Lead Forensic Auditor** (th
 2. **Bank Liaison (Gatekeeper):** A strict compliance officer who returns `401 Unauthorized` unless the Auditor negotiates using a specific Model Context Protocol (MCP) legal mandate.
 3. **Legal Officer (Termination):** The final OpenEnv grading script that compares the Auditor's submitted case file against the hidden Ground Truth.
 
+## Architectural Overview
+
+#### 1. The Architecture Diagram (The "Blueprint")
+![Architecture Diagram](./docs/Architecture_Diagram.png)
+
+### 2. The Execution Model (The "Timeline")
+![Execution Model](./docs/Execution_Model.png)
+
 ## Quick Start
 
 The simplest way to use the Global Syndicate Taskforce Env environment is through the `GlobalSyndicateTaskforceEnv` class:
