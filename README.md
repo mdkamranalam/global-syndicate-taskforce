@@ -50,6 +50,14 @@ Here is the chronological breakdown:
 - **Step 3 (The Breakthrough - The "Money Shot"):** The LLM demonstrates **Theory-of-Mind**. It reads the error, understands the Liaison's incentives, and sends a new action citing a specific legal policy (`IndiaStack_Sec9`). The Liaison unlocks, reveals the true data (that the KYC is actually a synthetic fraud identity), and overwrites the Analyst's hallucination. **Crucially, the Dense Reward Engine fires off a `+0.30` reward.** This is the exact moment the agent learns *how* to be a good auditor.
 - **Step 4 (The Win):** The LLM submits the verified fraud evidence to the Legal Officer. The Legal Officer compares it to the hidden truth, confirms it is a perfect match, ends the episode (`done=True`), and awards the final `+0.70` reward.
 
+### The Dense Reward Engine (RL Training Signal)
+Standard environments use sparse rewards (0/1 at the end), which results in flatlining training curves. We engineered a **Continuous Dense Reward Engine** to provide rich, step-by-step training signals:
+
+- 🔻 **`0.05` (Operational Drag):** Penalty for taking unnecessary steps or repeating actions.
+- 🟢 **`+0.20` (Negotiation Bonus):** Awarded when the Auditor uses Theory-of-Mind to cite the correct policy, bypassing the Liaison's `401 Unauthorized` block.
+- 🟢 **`+0.30` (Cross-Examination Bonus):** Awarded when the Auditor successfully overwrites a Tier 1 Analyst's hallucination with the Liaison's verified truth.
+- 🏆 **`+0.50` (Terminal Success):** Awarded for correctly classifying the money laundering syndicate to the Legal Officer.
+
 ## Quick Start
 
 The simplest way to use the Global Syndicate Taskforce Env environment is through the `GlobalSyndicateTaskforceEnv` class:
