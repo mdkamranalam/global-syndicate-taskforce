@@ -32,9 +32,23 @@ There is only ONE true AI in this environment: **The Lead Forensic Auditor** (th
 
 #### 1. The Architecture Diagram (The "Blueprint")
 ![Architecture Diagram](./docs/Architecture_Diagram.png)
+It proves you decoupled the "Brain" from the "World."
+
+- **The Client (Evaluated Agent):** On one side, you have the Lead Forensic Auditor. This is the **only** actual LLM in the system (e.g., Qwen 2.5). It lives inside your `inference.py` loop. Its entire job is to read the environment state and output strict, MCP-safe JSON actions.
+- **The Server (OpenEnv AML Environment):** On the other side is the environment, which contains three core engines:
+    - **The State Machine Gatekeepers:** Instead of using expensive, unpredictable LLMs for the "team," you built deterministic Python scripts. The Tier 1 Analyst is coded to hallucinate 20% of the time. The Bank Liaison is coded to act as a locked door (`401 Unauthorized`). The Legal Officer is the final grader. This guarantees the environment is fast and consistent.
+    - **The Centralized Blackboard:** This is your cure for "Context Drowning." The LLM doesn't read a massive, messy chat history. The Gatekeepers write their findings directly to this centralized JSON Case File, and the LLM only reads the clean, pruned updates.
+    - **The Dense Reward Engine:** This sits in the middle, intercepting actions. When the LLM does something smart (like catching a hallucination), this engine fires off an intermediate positive reward.
 
 ### 2. The Execution Model (The "Timeline")
 ![Execution Model](./docs/Execution_Model.png)
+Here is the chronological breakdown:
+
+- **Step 0 (Initialization):** The environment starts. The Blackboard is empty, and the reward is `0.0`. The LLM is flying blind.
+- **Step 1 (The Trap):** The LLM asks the Tier 1 Analyst for a triage report. The Analyst's code triggers, fetches the data, but intentionally hallucinates that the "KYC is Verified." The LLM takes a `0.05` penalty for taking a step.
+- **Step 2 (The Wall):** The LLM asks the Bank Liaison to verify the documents, but forgets to provide a legal justification. The Liaison acts as a wall, writing a `401 Unauthorized` error to the Blackboard. Another `0.05` penalty.
+- **Step 3 (The Breakthrough - The "Money Shot"):** The LLM demonstrates **Theory-of-Mind**. It reads the error, understands the Liaison's incentives, and sends a new action citing a specific legal policy (`IndiaStack_Sec9`). The Liaison unlocks, reveals the true data (that the KYC is actually a synthetic fraud identity), and overwrites the Analyst's hallucination. **Crucially, the Dense Reward Engine fires off a `+0.30` reward.** This is the exact moment the agent learns *how* to be a good auditor.
+- **Step 4 (The Win):** The LLM submits the verified fraud evidence to the Legal Officer. The Legal Officer compares it to the hidden truth, confirms it is a perfect match, ends the episode (`done=True`), and awards the final `+0.70` reward.
 
 ## Quick Start
 
