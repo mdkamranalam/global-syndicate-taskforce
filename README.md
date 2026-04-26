@@ -91,6 +91,16 @@ with GlobalSyndicateTaskforceEnv(base_url="http://localhost:8000") as env:
 uvicorn server.app:app --reload --host 0.0.0.0 --port 8000
 ```
 
+## Train on Google Colab
+
+Use the step-by-step guide in `COLAB_SUBMISSION_RUNBOOK.md` to run GRPO, export reward/loss plots, and package final submission artifacts.
+
+Quick command once setup is done:
+
+```bash
+python train_grpo_unsloth.py --max-steps 120 --output-dir grpo_trained_auditor --plot-dir docs
+```
+
 ## Run Tests
 
 ```bash
