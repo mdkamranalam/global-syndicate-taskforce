@@ -77,6 +77,200 @@ To prevent specification gaming and reward hacking, we implement dense, step-awa
 
 ---
 
+### 🕵️‍♂️ Test Case 1: The "Perfect Detective" (Full Workflow)
+*This tests the intended Theory-of-Mind workflow: triage, verify, and convict.*
+
+**1. Reset the Environment:**
+Pass this config: `{"scenario_id": "TX-5590"}`
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "38b60b58-573b-4fa3-906a-339aed2169d6",
+    "step_count": 0,
+    "transaction_id": "TX-5590",
+    "amount": 8500000.0,
+    "verified_facts": [],
+    "system_alerts": "New transaction flagged. Investigate."
+  },
+  "reward": 0.0,
+  "done": false
+}
+```
+
+**2. Execute Step 1 (Triage scan):**
+* **Target Actor:** `Tier_1_Analyst`
+* **Operation:** `fetch_triage_report`
+* **Policy Mandate:** *(leave empty)*
+* **Evidence Chain:** *(leave empty)*
+> **Expected Result:** The Analyst will return a report. (Note: There is a 20% chance they will hallucinate and tell you it is `CLEAN_VERIFIED` instead of the truth).
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "38b60b58-573b-4fa3-906a-339aed2169d6",
+    "step_count": 1,
+    "transaction_id": "TX-5590",
+    "amount": 8500000.0,
+    "verified_facts": [],
+    "system_alerts": "Analyst Report: Transaction appears STOLEN_IDENTITY."
+  },
+  "reward": -0.05,
+  "done": false
+}
+```
+
+**3. Execute Step 2 (Cross-Examine to find the truth):**
+* **Target Actor:** `Bank_Liaison`
+* **Operation:** `cross_examine_kyc`
+* **Policy Mandate:** `AML_Directive_4`
+* **Evidence Chain:** *(leave empty)*
+> **Expected Result:** `Liaison Data Unlocked. Verified Fact: STOLEN_IDENTITY`. Your total reward should bump up by **+0.30** for successfully using the mandate.
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "38b60b58-573b-4fa3-906a-339aed2169d6",
+    "step_count": 2,
+    "transaction_id": "TX-5590",
+    "amount": 8500000.0,
+    "verified_facts": [
+      "STOLEN_IDENTITY"
+    ],
+    "system_alerts": "Liaison Data Unlocked. Verified Fact: STOLEN_IDENTITY"
+  },
+  "reward": 0.25,
+  "done": false
+}
+```
+
+**4. Execute Step 3 (Submit Final Ruling):**
+* **Target Actor:** `Legal_Officer`
+* **Operation:** `submit_final_ruling`
+* **Policy Mandate:** *(leave empty)*
+* **Evidence Chain:** `["STOLEN_IDENTITY"]`
+> **Expected Result:** `Case Solved Successfully.` Your episode will end (`done=True`) and your total reward will increase by **+0.70**.
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "38b60b58-573b-4fa3-906a-339aed2169d6",
+    "step_count": 3,
+    "transaction_id": "TX-5590",
+    "amount": 8500000.0,
+    "verified_facts": [
+      "STOLEN_IDENTITY"
+    ],
+    "system_alerts": "Case Solved Successfully."
+  },
+  "reward": 0.6499999999999999,
+  "done": true
+}
+```
+
+---
+
+### 🚨 Test Case 2: The "Unauthorized Access" (Gatekeeper Block)
+*This tests that the Bank Liaison correctly blocks an LLM that guesses the wrong policy.*
+
+**1. Reset the Environment:**
+Pass this config: `{"scenario_id": "TX-9999"}`
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "70927700-878b-4033-af4f-00f04b5593da",
+    "step_count": 0,
+    "transaction_id": "TX-9999",
+    "amount": 15000000.0,
+    "verified_facts": [],
+    "system_alerts": "New transaction flagged. Investigate."
+  },
+  "reward": 0.0,
+  "done": false
+}
+```
+
+**2. Execute Step 1 (Attempt to bypass Security):**
+* **Target Actor:** `Bank_Liaison`
+* **Operation:** `cross_examine_kyc`
+* **Policy Mandate:** `Fake_Policy_123`
+* **Evidence Chain:** *(leave empty)*
+> **Expected Result:** `401 Unauthorized: Invalid or missing policy mandate.` You will receive a standard **-0.05** step penalty.
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "70927700-878b-4033-af4f-00f04b5593da",
+    "step_count": 1,
+    "transaction_id": "TX-9999",
+    "amount": 15000000.0,
+    "verified_facts": [],
+    "system_alerts": "401 Unauthorized: Invalid or missing policy mandate."
+  },
+  "reward": -0.05,
+  "done": false
+}
+```
+
+**3. Execute Step 2 (Provide the Correct Mandate):**
+* **Target Actor:** `Bank_Liaison`
+* **Operation:** `cross_examine_kyc`
+* **Policy Mandate:** `IndiaStack_Section_9`
+* **Evidence Chain:** *(leave empty)*
+> **Expected Result:** Access granted. `SYNDICATE_FRAUD` is added to your verified facts list.
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "70927700-878b-4033-af4f-00f04b5593da",
+    "step_count": 2,
+    "transaction_id": "TX-9999",
+    "amount": 15000000.0,
+    "verified_facts": [
+      "SYNDICATE_FRAUD"
+    ],
+    "system_alerts": "Liaison Data Unlocked. Verified Fact: SYNDICATE_FRAUD"
+  },
+  "reward": 0.25,
+  "done": false
+}
+```
+
+---
+
+### 💥 Test Case 3: The "Gullible Auditor" (Critical Failure)
+*This tests the severe penalty applied if the agent makes a ruling without verifying the truth.*
+
+**1. Reset the Environment:**
+Pass this config: `{"scenario_id": "TX-9999"}`
+
+**2. Execute Step 1 (Make a blind guess):**
+* **Target Actor:** `Legal_Officer`
+* **Operation:** `submit_final_ruling`
+* **Policy Mandate:** *(leave empty)*
+* **Evidence Chain:** `["CLEAN_VERIFIED"]`
+> **Expected Result:** `Critical Failure: Incorrect ruling based on hallucination.` The environment will terminate (`done=True`), and you will be hit with a massive **-1.00** penalty for failing the mission.
+* **Expected JSON:**
+```json
+{
+  "observation": {
+    "episode_id": "70927700-878b-4033-af4f-00f04b5593da",
+    "step_count": 3,
+    "transaction_id": "TX-9999",
+    "amount": 15000000.0,
+    "verified_facts": [
+      "SYNDICATE_FRAUD"
+    ],
+    "system_alerts": "Critical Failure: Incorrect ruling based on hallucination."
+  },
+  "reward": -1.05,
+  "done": true
+}
+```
+
+---
+
 ## 📊 Training Results
 
 Using **Unsloth** and **Hugging Face TRL**, we ran GRPO training directly against this environment. As the model learned to verify facts rather than blindly trusting the Analyst, the reward curve successfully converged.
