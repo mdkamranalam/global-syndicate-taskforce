@@ -35,5 +35,8 @@ class AMLAction(Action):
     @classmethod
     def wrap_string_in_list(cls, v):
         if isinstance(v, str) and v:
-            return [v]
+            # Smart-stripping for UI users who type brackets/quotes manually
+            clean_v = v.strip().strip("[]").strip('"').strip("'")
+            return [clean_v]
         return v
+
