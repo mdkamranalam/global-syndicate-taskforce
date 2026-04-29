@@ -144,8 +144,8 @@ openenv push
 
 ## 🏆 Submission Links
 
-- **Demo video (unlisted):** `<paste-youtube-link>`
-- **Hugging Face Space:** `<paste-space-url>`
+- **Hugging Face Space:** https://huggingface.co/spaces/TheDevCrew/global-syndicate-taskforce-env
+- **Google Colab Notebook:** https://colab.research.google.com/drive/1o_WhomyUC3gC_Tjl8GxCgsusu4RvT5jP?usp=sharing
 - **Training Artifacts:** See `/docs` for full reward and loss curves.
 
 *Meta PyTorch OpenEnv Hackathon x Scaler Hackathon 2026.*
