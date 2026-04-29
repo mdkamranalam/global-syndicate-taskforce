@@ -49,7 +49,11 @@ class GlobalSyndicateTaskforceEnvironment(Environment):
         self.step_count = 0
         self.verified_facts = []
         self.liaison_bonus_claimed = False
-        self.scenario_id = scenario_id if scenario_id in SCENARIOS else "TX-1024"
+        if scenario_id is None:
+            self.scenario_id = random.choice(list(SCENARIOS.keys()))
+        else:
+            self.scenario_id = scenario_id if scenario_id in SCENARIOS else "TX-1024"
+            
         self.scenario_data = SCENARIOS[self.scenario_id]
         self.current_episode_id = str(uuid.uuid4())
         
